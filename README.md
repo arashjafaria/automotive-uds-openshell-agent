@@ -36,6 +36,8 @@ file/network access according to the active runtime policy.
 - `examples/synthetic_uds_responses.csv`: five fabricated examples, three positive and two negative responses.
 - `tests/test_uds_demo.py`: unit tests of the demonstration classifier.
 - `SECURITY.md`: publishing and data-boundary notes.
+- `Jenkinsfile`: local Jenkins Pipeline as Code for 4 original + 6 demonstration UDS tests.
+- `JENKINS_SETUP.md`: configure and verify the independent UDS Jenkins job.
 
 ## Run the synthetic offline example
 
@@ -47,6 +49,16 @@ PYTHONPATH=original:. .venv/bin/python -m pytest -q
 ```
 
 The offline Python examples require **no LLM/API key** and make no network requests when analyzing data. With `PYTHONPATH=original:.`, pytest can import both the original analyzer and the standalone demo, and should collect **10 tests** (4 original + 6 demonstration). To run only the demonstration tests, use `.venv/bin/python -m pytest -q tests/test_uds_demo.py`.
+
+## Jenkins CI — Automated UDS validation
+
+A new **[Jenkinsfile](Jenkinsfile)** and **[setup guide](JENKINS_SETUP.md)** bring the repository's offline UDS validation into a local Jenkins CI pipeline. The Jenkinsfile reuses the already existing Docker-based Python agent labeled `aeb-python`, without modifying the separate AEB validation job.
+
+It defines clean checkout, reproducible Python dependencies, a synthetic-source security scan, **10 UDS tests** (4 original + 6 demonstration), JUnit reporting, statement/branch coverage measurement, synthetic report artifacts, a build timeout, and SCM polling. The Python CI steps run **without Nemotron, OpenRouter or real vehicle data**.
+
+**Verification status:** This UDS Jenkinsfile is published, but its **first Jenkins execution is not yet verified**. The previously demonstrated **17 tests / 100% coverage / 95% quality gate** belong to the separate AEB validation pipeline, **not** to this UDS project. The new UDS code coverage result and any quality threshold will be established only after an actual UDS build.
+
+The setup guide explains how to create a **new `UDS-Validation-Pipeline`** from the **public HTTPS** repository URL with no Git credentials. See [JENKINS_SETUP.md](JENKINS_SETUP.md).
 
 ## Example results
 

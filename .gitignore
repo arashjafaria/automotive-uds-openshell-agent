@@ -21,3 +21,9 @@ __pycache__/
 # Review-only copies of original Ubuntu scripts — never publish automatically
 .private_review/
 /original/
+
+# Local Jenkins and coverage outputs
+/test-results.xml
+/coverage.xml
+/.coverage
+/reports/

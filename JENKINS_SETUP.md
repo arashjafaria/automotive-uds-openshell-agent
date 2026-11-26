@@ -1,15 +1,15 @@
 # Jenkins CI — Automotive UDS Log Analysis Agent
 
-This project has a **Jenkins Pipeline as Code** file in `Jenkinsfile`. It reuses the locally installed Jenkins controller and Python Docker agent originally built for a separate, educational **AEB validation** project.
+This project defines its local CI configuration in the version-controlled `Jenkinsfile`. It runs Python unit tests, publishes JUnit and coverage reports, and archives synthetic diagnostic summaries.
 
-**Important distinction:** The earlier AEB Jenkins pipeline was successfully executed (17 AEB tests, 100% measured AEB coverage, a 95% AEB coverage quality gate, and JUnit/coverage artifacts). This new **UDS** pipeline is a separate job and is **not yet verified by an actual Jenkins build**. Its results must be recorded after the first run. Do not attribute the AEB coverage percentage to the UDS analyzer.
+**Verification status:** This UDS pipeline has been published, but successful execution in Jenkins has not yet been verified. No coverage percentage or minimum coverage threshold is claimed for this repository.
 
 ## Prerequisites
 
 - Ubuntu on WSL2 with Docker running.
 - Existing Jenkins controller `jenkins-learning` available at `http://localhost:8080`.
 - Existing Docker Jenkins agent `python-aeb-worker` online in Jenkins as `python-aeb-agent`.
-- Its existing label: `aeb-python`. The current `Jenkinsfile` uses that label to avoid changing or recreating the agent.
+- Its existing label: `aeb-python`. The current `Jenkinsfile` uses this label and can be adapted to a different Python-capable agent.
 - Python 3 and `python3 -m venv` available on the agent.
 - Network access from Jenkins and its agent to **public GitHub** and to Python package indexes for the Setup stage.
 
@@ -28,7 +28,7 @@ This project has a **Jenkins Pipeline as Code** file in `Jenkinsfile`. It reuses
 8. Save and click **Build Now** **once** for the initial verification. The `Jenkinsfile` includes the SCM polling trigger `H/5 * * * *` for later commits, while the local controller is running.
 9. Open **Console Output**, **Test Result**, and **Build Artifacts** for that build.
 
-This does **not** change, overwrite, or delete `AEB-Validation-Pipeline` or `AEB-Validation-Tests`.
+The pipeline operates in a workspace dedicated to this Jenkins job; it does not change other jobs.
 
 ## Pipeline stages and responsibilities
 
@@ -40,7 +40,7 @@ This does **not** change, overwrite, or delete `AEB-Validation-Pipeline` or `AEB
 | UDS Unit Tests | Runs **4 original** and **6 demonstration** unit tests, publishes JUnit XML and collects statement/branch coverage for both Python modules. |
 | Synthetic Reports | Produces a report from `examples/synthetic_uds_responses.csv` and another report from the original built-in synthetic samples. |
 
-The expected count is **10 collected tests** if both test files still contain their current four and six tests. The exact UDS coverage percentage is **not yet verified**; **no UDS coverage threshold has been imposed**. After measuring coverage in Jenkins, consider a justified threshold rather than copying the unrelated 95% value from AEB.
+The expected count is **10 collected tests** if both test files still contain their current four and six tests. The exact UDS coverage percentage is **not yet verified**, and **no UDS coverage threshold has been imposed**. Define a threshold only after measuring coverage and reviewing untested behavior.
 
 Archived artifacts:
 
@@ -67,14 +67,11 @@ The generated reports and virtual environment should not be committed to Git. Gi
 
 ## Troubleshooting
 
-- **Agent unavailable:** in **Manage Jenkins → Nodes**, verify `python-aeb-agent` is online and has the `aeb-python` label. Do not delete the working agent.
-- **Git checkout permission error:** verify you used the public **HTTPS** repository URL with no credentials, not the AEB-only SSH deploy key.
+- **Agent unavailable:** in **Manage Jenkins → Nodes**, verify `python-aeb-agent` is online and has the `aeb-python` label. Confirm the configured agent is online and available to Jenkins.
+- **Git checkout permission error:** verify you used the public **HTTPS** repository URL without unnecessary credentials.
 - **Missing Python packages:** inspect the Setup stage and `requirements-dev.txt`. Do not modify the agent's global Python environment.
 - **ModuleNotFoundError for `uds_analyzer`:** verify the test command includes `PYTHONPATH=original:.` and the tracked original files were checked out.
 - **No JUnit test report:** investigate the earliest failure. The Test stage rejects a missing JUnit report.
 - **Polling does not run:** Jenkins must be running; check the job's Git Polling Log. `H/5 * * * *` schedules a check approximately every five minutes and triggers a build when changes are detected.
 - **Cost:** the tools and local workflow use no paid API or cloud compute. Normal internet access and your machine's own resources are still required.
 
-## Interview explanation
-
-> I had already built a separate local Jenkins Controller/Agent CI setup for a Python AEB simulator. For this public UDS project, I version-controlled an additional Jenkinsfile that reuses the Python agent, performs a public GitHub checkout, installs a clean test environment, runs original and synthetic UDS unit tests, publishes JUnit and code-coverage data, and archives synthetic reports. The UDS job must be executed and its actual result verified before describing it as operational. The AI-agent side (OpenShell/OpenCode/Nemotron) and the deterministic offline Python CI checks are distinct parts of the portfolio.

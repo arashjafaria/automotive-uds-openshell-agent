@@ -52,13 +52,13 @@ The offline Python examples require **no LLM/API key** and make no network reque
 
 ## Jenkins CI — Automated UDS validation
 
-A new **[Jenkinsfile](Jenkinsfile)** and **[setup guide](JENKINS_SETUP.md)** bring the repository's offline UDS validation into a local Jenkins CI pipeline. The Jenkinsfile reuses the already existing Docker-based Python agent labeled `aeb-python`, without modifying the separate AEB validation job.
+A **[Jenkinsfile](Jenkinsfile)** and **[setup guide](JENKINS_SETUP.md)** define a local Jenkins CI pipeline for offline UDS validation, running on a Python-capable Jenkins agent with the label `aeb-python`.
 
 It defines clean checkout, reproducible Python dependencies, a synthetic-source security scan, **10 UDS tests** (4 original + 6 demonstration), JUnit reporting, statement/branch coverage measurement, synthetic report artifacts, a build timeout, and SCM polling. The Python CI steps run **without Nemotron, OpenRouter or real vehicle data**.
 
-**Verification status:** This UDS Jenkinsfile is published, but its **first Jenkins execution is not yet verified**. The previously demonstrated **17 tests / 100% coverage / 95% quality gate** belong to the separate AEB validation pipeline, **not** to this UDS project. The new UDS code coverage result and any quality threshold will be established only after an actual UDS build.
+**Verification status:** This UDS Jenkinsfile is published, but a successful UDS Jenkins build has not yet been verified. This repository does not claim a UDS code-coverage percentage or enforce a coverage threshold.
 
-The setup guide explains how to create a **new `UDS-Validation-Pipeline`** from the **public HTTPS** repository URL with no Git credentials. See [JENKINS_SETUP.md](JENKINS_SETUP.md).
+The setup guide explains how to configure a `UDS-Validation-Pipeline` job from the public HTTPS repository URL without credentials. See [JENKINS_SETUP.md](JENKINS_SETUP.md).
 
 ## Example results
 
@@ -68,7 +68,7 @@ The setup guide explains how to create a **new `UDS-Validation-Pipeline`** from 
 
 These are **simplified UDS payloads**. This demo does **not** implement CAN/CAN-FD capture, ISO-TP segmentation/reassembly, flashing, ECU access, DTC traceability, or real-vehicle validation.
 
-## What was actually done
+## Project implementation
 
 1. Used Ubuntu on WSL2 and Docker to work with OpenShell.
 2. Configured a sandbox named `arash-agent-v2` and ran OpenCode inside it.
@@ -78,9 +78,6 @@ These are **simplified UDS payloads**. This demo does **not** implement CAN/CAN-
 
 No Nemotron model training, fine-tuning, or trained checkpoint is claimed. Configuration-level permissions do not replace OpenShell runtime policy enforcement.
 
-## Interview summary
-
-> I configured an automotive UDS log-analysis agent using OpenCode, NVIDIA OpenShell sandboxing, and a hosted NVIDIA Nemotron model. I constrained tool access, used synthetic data, and created an offline Python demonstration for classifying positive and negative UDS responses. I did not fine-tune the LLM; my focus was secure agent configuration, tool orchestration and diagnostic interpretation.
 
 ## Security and scope
 

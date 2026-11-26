@@ -75,4 +75,32 @@ This is a learning project and **not certified for safety-critical automotive us
 
 ## Publication status and source provenance
 
-The `agents/automotive-uds.md` content is reconstructed from the original local terminal transcript, with formatting normalized for Markdown. The offline `uds_demo.py` and its six tests are a **separate synthetic demonstration**, not the earlier local Python analyzer. The earlier `uds_analyzer.py` and `test_uds_analyzer.py` are intentionally **not included** until the original Ubuntu files can be reviewed and sanitized. See `PUBLISHING.md` for the public repository workflow and safe recovery procedure.
+.
+## Original UDS Analyzer
+
+## Publication status and source provenance
+
+This repository combines my original automotive UDS diagnostic analysis project with a separate educational demonstration.
+
+### Original project files
+- `original/uds_analyzer.py` — Original Python implementation for analyzing UDS diagnostic responses.
+- `original/test_uds_analyzer.py` — Original unit tests (4 tests passed).
+- `agents/automotive-uds.md` — OpenCode agent configuration recovered from the original learning exercise and formatted for publication.
+
+### Additional educational demonstration
+- `uds_demo.py` — Standalone Python example for interpreting synthetic UDS responses.
+- `tests/test_uds_demo.py` — Six automated tests for the demonstration.
+- `examples/synthetic_uds_responses.csv` — Fabricated diagnostic data for testing.
+
+### Security and verification
+- The original Python files were manually reviewed before publication.
+- Automated checks found no common secret patterns.
+- All 4 original tests and 6 demonstration tests passed.
+- No confidential vehicle logs, credentials, or company data are intentionally included.
+
+### AI model and architecture
+This project demonstrates the configuration and use of an automotive diagnostic AI agent using NVIDIA OpenShell, OpenCode, and a pretrained NVIDIA Nemotron model accessed through OpenRouter.
+
+**No LLM was trained or fine-tuned.** The work focused on agent configuration, sandbox security, tool permissions, Python-based diagnostic analysis, and automated testing.
+
+This is an educational engineering project, not a production-ready or safety-certified automotive diagnostic system.

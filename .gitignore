@@ -1,0 +1,23 @@
+# No secrets, real vehicle logs or work data
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+*.log
+*.asc
+*_private*
+.ssh/
+credentials*/
+secrets*/
+real_data/
+company_data/
+__pycache__/
+.pytest_cache/
+.venv/
+*.pyc
+
+# Review-only copies of original Ubuntu scripts — never publish automatically
+.private_review/
+/original/

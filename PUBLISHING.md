@@ -1,50 +1,47 @@
-# Publishing safely to your GitHub account
+# Publishing and maintaining this public GitHub repository
 
-**Account:** `arashjafaria`
-**New public repository:** `automotive-uds-openshell-agent`
-**Data:** synthetic UDS examples only
-**Training claim:** This is an OpenCode/NVIDIA OpenShell *agent configuration*, NOT an LLM trained or fine-tuned by the project owner.
+**Repository:** https://github.com/arashjafaria/automotive-uds-openshell-agent
+**Status:** Published on the `main` branch
+**Data policy:** Synthetic educational UDS examples only
+**Model claim:** A pretrained NVIDIA Nemotron model was used through OpenRouter; **no LLM training or fine-tuning** was performed.
 
-## 1. Publish the reviewed synthetic starter
+## What has been published
 
-1. Download this ZIP, extract into Windows Downloads, and copy/move the extracted `automotive-uds-openshell-agent` folder to `~/automotive-uds-openshell-agent` in Ubuntu/WSL2.
-2. Open Ubuntu. Make sure your GitHub CLI is logged in (`gh auth status`). Never paste your GitHub token into chat.
-3. Run:
+The initial public commit contained the OpenCode agent configuration, a separate synthetic offline UDS demonstration, six demonstration tests, documentation, and publication scripts.
 
-```bash
-cd ~/automotive-uds-openshell-agent
-bash scripts/publish_public.sh
-```
+A later commit added two previously local, manually reviewed Python files:
 
-The script runs the six tests, checks for common secret patterns, stages **only** the explicitly listed synthetic files, prints the pending file list, and asks you to type `PUBLISH` before creating the PUBLIC GitHub repo. It uses `gh repo create --public` and your existing GitHub authentication. The script does **not** publish the original analyzer files.
+- `original/uds_analyzer.py` — original UDS response-analysis code.
+- `original/test_uds_analyzer.py` — four original unit tests.
 
-Afterward check the new repository: https://github.com/arashjafaria/automotive-uds-openshell-agent
+These original files are **distinct from** `uds_demo.py` and `tests/test_uds_demo.py`. The latter are additional educational examples, not the original source code. The reviewed public files contain synthetic data rather than raw company traces.
 
-## 2. Recover and review the original local analyzer
-
-The original files from the earlier exercise were reportedly saved in the Ubuntu home directory:
-
-- `~/uds_analyzer.py`
-- `~/test_uds_analyzer.py`
-- `~/automotive-uds.md`
-
-Run:
+## Verify the published project locally
 
 ```bash
 cd ~/automotive-uds-openshell-agent
-bash scripts/inspect_local_originals.sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
+PYTHONPATH=original:. .venv/bin/python -m pytest -q
+python3 scripts/check_public_safety.py original/ agents/automotive-uds.md
+git status --short
 ```
 
-The script copies any existing files into `.private_review/`, which `.gitignore` explicitly excludes. It reports possible credential patterns **without displaying the secret values**. It does not publish or upload those files.
+The expected test suite is **10 passing tests**: four original and six demonstration tests. The secret-pattern scan is not a substitute for a human review.
 
-**Before publishing original files:** manually inspect every line for real/customer diagnostic logs, VINs, credentials, or company project details; remove or replace sensitive content; then run tests on the sanitized copies. Publishing cannot be completely undone merely by deleting a later Git commit; the secret may remain in history.
+## Safety checklist for future changes
 
-Once confirmed safe, copy **only** sanitized Python source files into `original/`, explicitly stage them with `git add original/uds_analyzer.py original/test_uds_analyzer.py`, review `git diff --cached`, then commit and push. Do not copy raw diagnostic log dumps.
+1. Use only synthetic or explicitly approved, non-confidential data. Never commit actual BMW/ARRK/customer logs, VINs, credentials, private keys, internal configuration, or screenshots from company systems.
+2. Review exact changed contents before staging or pushing. In particular, check files in `original/` manually.
+3. Run the tests and secret-pattern scanner, then inspect `git diff --cached` (not only `--stat`).
+4. Commit and push normal updates with `git push origin main` after review.
 
-If the original files cannot be located, the synthetic demo remains a standalone, accurate, publicly shareable learning project. Do not claim that its demonstration classifier is the original source code.
+The `/original/` entry in `.gitignore` was originally a precaution against accidental publication. Files already tracked in Git remain tracked despite that rule. A new file inside `original/` must be explicitly reviewed and force-added if needed.
 
-## Notes
+**Do not rerun `scripts/publish_public.sh` for updates.** That script is for the initial creation of the GitHub repository, which has already happened.
 
-- This archive includes no API keys, deploy keys, internal customer logs, or VINs.
-- `agents/automotive-uds.md` reflects the original agent *instructions*; OpenShell OS/network permissions are configured separately and not bundled as a runnable sandbox image.
-- The original code may have different test results; the six passing tests belong to the separate synthetic `uds_demo.py` example.
+Git history may retain old contents even after later deletion. If a secret is accidentally published, revoke or rotate the credential immediately and follow a secure Git history-removal process.
+
+## Runtime and model boundaries
+
+`agents/automotive-uds.md` records OpenCode agent instructions and requested tool permissions. It does **not** export a complete, deployable OpenShell sandbox policy or contain model weights. OpenShell runtime restrictions are configured independently. OpenRouter is an external model route, so model requests may leave the sandbox; do not send confidential work data.

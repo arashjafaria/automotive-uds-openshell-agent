@@ -30,6 +30,8 @@ file/network access according to the active runtime policy.
 ## Files
 
 - `agents/automotive-uds.md`: original OpenCode agent instructions and requested permission settings.
+- `original/uds_analyzer.py`: original local UDS response-analysis script, reviewed before public release.
+- `original/test_uds_analyzer.py`: four unit tests for the original analyzer.
 - `uds_demo.py`: newly written standalone illustrative Python classifier of already reassembled UDS **response payloads**. **Not a reproduction of the original local analyzer.**
 - `examples/synthetic_uds_responses.csv`: five fabricated examples, three positive and two negative responses.
 - `tests/test_uds_demo.py`: unit tests of the demonstration classifier.
@@ -38,12 +40,13 @@ file/network access according to the active runtime policy.
 ## Run the synthetic offline example
 
 ```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
 python3 uds_demo.py examples/synthetic_uds_responses.csv
-python3 -m pip install -r requirements-dev.txt
-python3 -m pytest -q
+PYTHONPATH=original:. .venv/bin/python -m pytest -q
 ```
 
-The offline Python demo requires **no LLM/API key**, and makes no network requests when analyzing data. For an isolated Python environment, use `python3 -m venv .venv` and `.venv/bin/python -m pip install -r requirements-dev.txt`.
+The offline Python examples require **no LLM/API key** and make no network requests when analyzing data. With `PYTHONPATH=original:.`, pytest can import both the original analyzer and the standalone demo, and should collect **10 tests** (4 original + 6 demonstration). To run only the demonstration tests, use `.venv/bin/python -m pytest -q tests/test_uds_demo.py`.
 
 ## Example results
 
@@ -72,11 +75,6 @@ No Nemotron model training, fine-tuning, or trained checkpoint is claimed. Confi
 Do not commit passwords, tokens, private keys, internal customer logs, trace dumps, screenshots from company tooling, or confidential vehicle identifiers. Only synthetic examples belong in a public repo. OpenShell protects the **agent process**; external model APIs still receive the request content that is sent to them.
 
 This is a learning project and **not certified for safety-critical automotive use**.
-
-## Publication status and source provenance
-
-.
-## Original UDS Analyzer
 
 ## Publication status and source provenance
 
